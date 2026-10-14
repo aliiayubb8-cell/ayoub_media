@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>متابعة حالة الطلب - Ayoub Unlocker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Tajawal', sans-serif; }</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
+
+  <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-6">
+    
+    <div class="text-center">
+      <div class="inline-block bg-sky-500/10 text-sky-400 font-bold px-4 py-1.5 rounded-full text-xs border border-sky-500/20 mb-2">
+        Ayoub Unlocker & Media Group
+      </div>
+      <h1 class="text-2xl font-extrabold text-white">حالة طلبك الحالي</h1>
+      <p class="text-slate-400 text-xs mt-1">رقم الطلب: <span class="text-sky-400 font-mono font-bold">#{{ order[0] }}</span></p>
+    </div>
+
+    <!-- تفاصيل الطلب -->
+    <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 space-y-3 text-right text-sm">
+      <div class="flex justify-between items-center border-b border-slate-700/60 pb-2.5">
+        <span class="text-xs text-slate-400">الزبون:</span>
+        <span class="font-bold text-white">{{ order[1] }}</span>
+      </div>
+      <div class="flex justify-between items-center border-b border-slate-700/60 pb-2.5">
+        <span class="text-xs text-slate-400">الجهاز:</span>
+        <span class="font-bold text-sky-400">{{ order[3] }}</span>
+      </div>
+      <div class="flex justify-between items-center border-b border-slate-700/60 pb-2.5">
+        <span class="text-xs text-slate-400">نوع الخدمة:</span>
+        <span class="text-xs bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg">
+          {{ 'أونلاين (Remote)' if order[6] == 'online' else 'تسليم للمحل' }}
+        </span>
+      </div>
+
+      <!-- التكلفة -->
+      {% if order[9] %}
+      <div class="flex justify-between items-center border-b border-slate-700/60 pb-2.5 bg-emerald-950/30 p-2.5 rounded-xl border border-emerald-500/20">
+        <span class="text-xs text-emerald-300 font-semibold">التكلفة المطلوبة:</span>
+        <span class="font-extrabold text-emerald-400 text-lg">{{ order[9] }}</span>
+      </div>
+      {% endif %}
+
+      <!-- الملاحظة -->
+      {% if order[10] %}
+      <div class="bg-sky-950/40 border border-sky-500/30 p-3 rounded-xl space-y-1">
+        <span class="text-xs text-sky-300 font-semibold block">💬 ملاحظة من الفني (Ayoub):</span>
+        <p class="text-xs text-slate-200 leading-relaxed">{{ order[10] }}</p>
+      </div>
+      {% endif %}
+
+      <div class="flex justify-between items-center pt-2">
+        <span class="text-xs text-slate-400">الحالة الحالية:</span>
+        <div>
+          {% if order[8] == 'جديد' %}
+            <span class="bg-amber-500/20 text-amber-400 text-xs px-3 py-1.5 rounded-full border border-amber-500/30 font-bold animate-pulse">
+              ⏳ بانتظار المراجعة
+            </span>
+          {% elif order[8] == 'قيد العمل' %}
+            <span class="bg-blue-500/20 text-blue-400 text-xs px-3 py-1.5 rounded-full border border-blue-500/30 font-bold animate-pulse">
+              ⚙️ جاري العمل على الجهاز
+            </span>
+          {% else %}
+            <span class="bg-emerald-500/20 text-emerald-400 text-xs px-3 py-1.5 rounded-full border border-emerald-500/20 font-bold">
+              ✅ تم الإنجاز بنجاح
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- طرق الدفع المتاحة -->
+    {% if order[9] %}
+    <div class="bg-slate-800/90 border border-emerald-500/30 rounded-2xl p-5 space-y-4 text-right">
+      <h3 class="text-sm font-bold text-emerald-400 flex items-center gap-1.5 border-b border-slate-700/80 pb-2">
+        💳 طرق الدفع المتاحة للتحويل:
+      </h3>
+
+      <!-- Wish Money -->
+      <div class="bg-slate-900 p-3 rounded-xl border border-slate-700 space-y-2">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-bold text-red-400">🔴 Wish Money (ويش ماني)</span>
+          <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">تحويل محلي</span>
+        </div>
+        <div class="flex items-center justify-between bg-slate-950 p-2 rounded-lg border border-slate-800">
+          <span class="font-mono text-xs text-white font-bold" id="wishNumber">81918242</span>
+          <button onclick="copyText('wishNumber')" class="bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white text-[10px] px-2.5 py-1 rounded transition">
+            نسخ الرقم 📋
+          </button>
+        </div>
+        <p class="text-[11px] text-slate-400">الاسم: <span class="text-slate-200 font-semibold">Ayoub Unlocker</span></p>
+      </div>
+
+      <!-- Binance USDT -->
+      <div class="bg-slate-900 p-3 rounded-xl border border-slate-700 space-y-2">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-bold text-amber-400">🟡 USDT (Binance TRC20)</span>
+          <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">كريبتو</span>
+        </div>
+        <div class="flex items-center justify-between bg-slate-950 p-2 rounded-lg border border-slate-800">
+          <span class="font-mono text-[10px] text-sky-400 truncate max-w-[200px]" id="usdtWallet">TErG9WczNSLSdjyfkpwaKusr1tXr9UZ8Yc</span>
+          <button onclick="copyText('usdtWallet')" class="bg-sky-600/30 hover:bg-sky-600 text-sky-300 hover:text-white text-[10px] px-2.5 py-1 rounded transition">
+            نسخ العنوان 📋
+          </button>
+        </div>
+      </div>
+
+      <!-- قسم رفع ورؤية حالة الإيصال -->
+      <div class="bg-slate-900/90 border border-slate-700 p-3.5 rounded-xl space-y-2 pt-3">
+        <label class="block text-xs font-bold text-sky-400">📤 رفع صورة / إيصال الدفع والتحويل:</label>
+        
+        {% if order[11] %}
+        <div class="p-3 rounded-xl text-center text-xs font-bold space-y-1 border">
+          {% if order[12] == 'تم التأكيد' %}
+            <div class="bg-emerald-950/80 border-emerald-500 text-emerald-400 p-2 rounded-lg">
+              ✅ تم تأكيد واستلام الدفع بنجاح!
+            </div>
+          {% else %}
+            <div class="bg-amber-950/80 border-amber-500 text-amber-400 p-2 rounded-lg animate-pulse">
+              ⏳ تم إرفاق الإيصال وجاري التحقق من التحويل بواسطة الفني...
+            </div>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <form action="/upload_receipt/{{ order[0] }}" method="POST" enctype="multipart/form-data" class="space-y-2">
+          <input type="file" name="receipt_image" accept="image/*" required class="w-full text-xs text-slate-400 bg-slate-800 rounded-lg p-2 border border-slate-700 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-sky-600 file:text-white hover:file:bg-sky-500 cursor-pointer">
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg">
+            إرسال / تحديث صورة الإيصال 🚀
+          </button>
+        </form>
+      </div>
+
+    </div>
+    {% endif %}
+
+    <div class="space-y-2">
+      <button onclick="window.location.reload()" class="w-full bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 font-bold py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
+        <span>تحديث حالة الطلب والإيصال</span> 🔄
+      </button>
+      <a href="/" class="block text-xs text-center text-slate-500 hover:text-slate-400 transition pt-1">تقديم طلب جديد</a>
+    </div>
+
+  </div>
+
+  <script>
+    function copyText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text);
+      alert('تم النسخ بنجاح!');
+    }
+  </script>
+</body>
+</html>

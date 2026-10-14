@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة التحكم والإدارة - CRM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Tajawal', sans-serif; }</style>
+</head>
+<body class="bg-slate-950 text-slate-100 p-4 md:p-8">
+  
+  <div class="max-w-7xl mx-auto">
+    <!-- الهيدر العلوي -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 border-b border-slate-800 pb-4 gap-4">
+      <div>
+        <h1 class="text-2xl font-extrabold text-sky-400">لوحة إدارة الطلبات (CRM)</h1>
+        <p class="text-slate-400 text-xs mt-1">Ayoub Unlocker - إدارة وتأكيد الإيصالات بسهولة</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-700 transition">
+          فتح موقع الزبون ↗
+        </a>
+        <a href="/logout" class="bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white text-xs font-semibold px-4 py-2.5 rounded-xl border border-rose-500/30 transition">
+          تسجيل الخروج 🚪
+        </a>
+      </div>
+    </div>
+
+    <!-- كروت الفلترة والإحصائيات -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+      <a href="/admin?filter=all" class="bg-slate-900 hover:bg-slate-850 p-4 rounded-2xl border {% if current_filter == 'all' %}border-sky-500 bg-sky-950/20{% else %}border-slate-800{% endif %} transition flex flex-col justify-between">
+        <span class="text-xs text-slate-400 font-semibold">كل الطلبات</span>
+        <span class="text-2xl font-black text-white mt-2">{{ counts.total }}</span>
+      </a>
+
+      <a href="/admin?filter=جديد" class="bg-slate-900 hover:bg-slate-850 p-4 rounded-2xl border {% if current_filter == 'جديد' %}border-amber-500 bg-amber-950/20{% else %}border-slate-800{% endif %} transition flex flex-col justify-between">
+        <span class="text-xs text-amber-400 font-semibold">⏳ جديد</span>
+        <span class="text-2xl font-black text-amber-400 mt-2">{{ counts.new }}</span>
+      </a>
+
+      <a href="/admin?filter=قيد العمل" class="bg-slate-900 hover:bg-slate-850 p-4 rounded-2xl border {% if current_filter == 'قيد العمل' %}border-blue-500 bg-blue-950/20{% else %}border-slate-800{% endif %} transition flex flex-col justify-between">
+        <span class="text-xs text-blue-400 font-semibold">⚙️ قيد العمل</span>
+        <span class="text-2xl font-black text-blue-400 mt-2">{{ counts.progress }}</span>
+      </a>
+
+      <a href="/admin?filter=مكتمل" class="bg-slate-900 hover:bg-slate-850 p-4 rounded-2xl border {% if current_filter == 'مكتمل' %}border-emerald-500 bg-emerald-950/20{% else %}border-slate-800{% endif %} transition flex flex-col justify-between">
+        <span class="text-xs text-emerald-400 font-semibold">✅ مكتمل</span>
+        <span class="text-2xl font-black text-emerald-400 mt-2">{{ counts.done }}</span>
+      </a>
+    </div>
+
+    <!-- جدول الطلبات -->
+    <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-x-auto shadow-2xl">
+      <table class="w-full text-right text-sm">
+        <thead class="bg-slate-800/60 text-slate-300 text-xs uppercase tracking-wider">
+          <tr>
+            <th class="p-4">#</th>
+            <th class="p-4">الزبون</th>
+            <th class="p-4">الجهاز / المشكلة</th>
+            <th class="p-4">صورة الشاشة</th>
+            <th class="p-4">إيصال الدفع 💳</th>
+            <th class="p-4">الحالة</th>
+            <th class="p-4">تعديل الطلب والإيصال</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800">
+          {% for order in orders %}
+          <tr class="hover:bg-slate-850 transition">
+            <td class="p-4 text-slate-500 font-mono align-top">#{{ order[0] }}</td>
+            <td class="p-4 align-top">
+              <div class="font-bold text-white text-base">{{ order[1] }}</div>
+              <div class="text-xs text-sky-400 font-mono mt-1">{{ order[2] }}</div>
+            </td>
+            <td class="p-4 align-top max-w-xs">
+              <div class="text-white font-semibold">{{ order[3] }} <span class="text-xs text-sky-400 font-mono">({{ order[4] if order[4] else 'بدون IMEI' }})</span></div>
+              <div class="text-xs text-slate-300 mt-1 bg-slate-800/60 p-2 rounded-lg border border-slate-700/50">{{ order[5] }}</div>
+              <div class="text-xs text-slate-400 mt-1">الخدمة: <span class="text-sky-300">{{ 'أونلاين' if order[6] == 'online' else 'المحل' }}</span></div>
+            </td>
+            
+            <td class="p-4 align-top">
+              {% if order[7] %}
+              <a href="{{ url_for('static', filename='uploads/' + order[7]) }}" target="_blank" class="inline-flex items-center gap-1 bg-slate-800 hover:bg-slate-700 text-sky-400 text-xs px-3 py-1.5 rounded-xl border border-slate-700 transition">
+                شاشة الجهاز 🖼️
+              </a>
+              {% else %}
+              <span class="text-slate-500 text-xs">لا توجد</span>
+              {% endif %}
+            </td>
+
+            <!-- إيصال الدفع وحالته -->
+            <td class="p-4 align-top">
+              {% if order[11] %}
+              <div class="space-y-1.5">
+                <a href="{{ url_for('static', filename='uploads/' + order[11]) }}" target="_blank" class="inline-flex items-center gap-1 bg-emerald-950 hover:bg-emerald-900 text-emerald-400 text-xs px-3 py-1.5 rounded-xl border border-emerald-500/40 transition font-bold">
+                  عرض الإيصال 🧾
+                </a>
+                <div>
+                  {% if order[12] == 'تم التأكيد' %}
+                  <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30">مأكّد ✅</span>
+                  {% else %}
+                  <span class="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/30">قيد التحقق ⏳</span>
+                  {% endif %}
+                </div>
+              </div>
+              {% else %}
+              <span class="text-slate-500 text-xs">لم يرفق إيصال</span>
+              {% endif %}
+            </td>
+
+            <td class="p-4 align-top">
+              {% if order[8] == 'جديد' %}
+                <span class="bg-amber-500/10 text-amber-400 text-xs px-3 py-1.5 rounded-full border border-amber-500/20 font-medium">جديد</span>
+              {% elif order[8] == 'قيد العمل' %}
+                <span class="bg-blue-500/10 text-blue-400 text-xs px-3 py-1.5 rounded-full border border-blue-500/20 font-medium">قيد العمل</span>
+              {% else %}
+                <span class="bg-emerald-500/10 text-emerald-400 text-xs px-3 py-1.5 rounded-full border border-emerald-500/20 font-medium">مكتمل</span>
+              {% endif %}
+            </td>
+            
+            <td class="p-4 align-top">
+              <form action="/update_order/{{ order[0] }}?filter={{ current_filter }}" method="POST" class="space-y-2.5 bg-slate-950/40 p-3 rounded-2xl border border-slate-800">
+                
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-slate-400 w-16">حالة الطلب:</span>
+                  <select name="status" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-1.5 text-xs text-white focus:outline-none focus:border-sky-500">
+                    <option value="جديد" {% if order[8] == 'جديد' %}selected{% endif %}>جديد</option>
+                    <option value="قيد العمل" {% if order[8] == 'قيد العمل' %}selected{% endif %}>قيد العمل</option>
+                    <option value="مكتمل" {% if order[8] == 'مكتمل' %}selected{% endif %}>مكتمل (تم الإنجاز)</option>
+                  </select>
+                </div>
+
+                <!-- خيار تأكيد الإيصال -->
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-slate-400 w-16">الإيصال:</span>
+                  <select name="receipt_status" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-1.5 text-xs text-white focus:outline-none focus:border-sky-500">
+                    <option value="قيد التحقق" {% if order[12] == 'قيد التحقق' %}selected{% endif %}>قيد التحقق ⏳</option>
+                    <option value="تم التأكيد" {% if order[12] == 'تم التأكيد' %}selected{% endif %}>تم تأكيد الدفع ✅</option>
+                  </select>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-slate-400 w-16">التكلفة:</span>
+                  <input type="text" name="price" value="{{ order[9] }}" placeholder="مثال: 25$" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-1.5 text-xs text-white focus:outline-none focus:border-sky-500">
+                </div>
+
+                <div>
+                  <textarea name="note" rows="2" placeholder="اكتب ملاحظة للزبون..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-sky-500">{{ order[10] }}</textarea>
+                </div>
+
+                <div class="flex items-center justify-between pt-1">
+                  <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow">
+                    حفظ وإرسال 💾
+                  </button>
+                  <a href="/delete_order/{{ order[0] }}?filter={{ current_filter }}" onclick="return confirm('هل أنت متأكد من حذف هذا الطلب نهائياً؟')" class="text-rose-400 hover:text-rose-300 text-xs px-2 py-1 transition" title="حذف">
+                    🗑️ حذف
+                  </a>
+                </div>
+              </form>
+            </td>
+
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="7" class="p-12 text-center text-slate-500">لا توجد طلبات في هذا القسم حالياً.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</body>
+</html>

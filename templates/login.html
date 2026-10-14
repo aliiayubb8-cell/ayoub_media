@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الدخول - لوحة التحكم</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Tajawal', sans-serif; }</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
+
+  <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl space-y-6">
+    
+    <div class="text-center">
+      <div class="inline-block bg-sky-500/10 text-sky-400 font-bold px-4 py-1.5 rounded-full text-xs border border-sky-500/20 mb-3">
+        🔒 Ayoub Unlocker CRM
+      </div>
+      <h1 class="text-2xl font-extrabold text-white">تسجيل دخول الأدمن</h1>
+      <p class="text-slate-400 text-xs mt-1">أدخل بيانات الحساب للوصول للوحة التحكم</p>
+    </div>
+
+    {% if error %}
+    <div class="bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs p-3 rounded-xl text-center">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" class="space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1.5">اسم المستخدم</label>
+        <input type="text" name="username" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-500 transition" placeholder="Username">
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1.5">كلمة المرور</label>
+        <input type="password" name="password" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-500 transition" placeholder="••••••••">
+      </div>
+
+      <button type="submit" class="w-full bg-sky-500 hover:bg-sky-400 text-white font-bold py-3.5 rounded-xl shadow-lg transition">
+        دخول اللوحة 🚀
+      </button>
+    </form>
+
+  </div>
+
+</body>
+</html>
